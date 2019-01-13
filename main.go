@@ -190,9 +190,8 @@ func validateSignature(body []byte, reqSig string) bool {
 
 func roundUp(txn int64) int64 {
 	// By using 99 we ensure that a 0 value is not rounded up to the next 100.
-	//amtRound := (math.Round(float64(txn)/100) + 99)
-	amtRound := (txn + 99) / 100 * 100
-	return int64(amtRound) - txn
+	amtRound := ((txn + 99) / 100) * 100
+	return amtRound - txn
 }
 
 // Grabs txn deets and removes txn amt from balance and returns the minor units
