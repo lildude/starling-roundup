@@ -1,6 +1,4 @@
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/billglover/starling v0.0.0-20180715112535-a40600f92020 h1:gedRf7oE5Q+z/AUylSt4e6REMqIiF3tAlFN9W3tr5js=
-github.com/billglover/starling v0.0.0-20180715112535-a40600f92020/go.mod h1:3pExEr7YdOtSNP2GlIwgIdRFK707T2csz3cQAQcuIhw=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/uuid v0.0.0-20171129191014-dec09d789f3d h1:rXQlD9GXkjA/PQZhmEaF/8Pj/sJfdZJK7GJG0gkS8I0=
 github.com/google/uuid v0.0.0-20171129191014-dec09d789f3d/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
@@ -10,6 +8,14 @@ github.com/karupanerura/go-mock-http-response v0.0.0-20171201120521-7c242a447d45
 github.com/karupanerura/go-mock-http-response v0.0.0-20171201120521-7c242a447d45/go.mod h1:FULZ2B7LE0CUYtI8XLMYxI58AF9M6MTg6nWmZvWoFHQ=
 github.com/kelseyhightower/envconfig v0.0.0-20180517194557-dd1402a4d99d h1:Tqg6yg0as+P38tbKytv9/yk+ifNq0CrvjlgADEniKog=
 github.com/kelseyhightower/envconfig v0.0.0-20180517194557-dd1402a4d99d/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
+github.com/lildude/starling v0.0.0-20180715112535-a40600f92020 h1:YfYj57H1FIIU2Qm9Un3LGGNtSso22of9HcvW5IBuNHc=
+github.com/lildude/starling v0.0.0-20180715112535-a40600f92020/go.mod h1:XpUO3QWHgbDIkXkJmpa6JbDCepPmDiidxy8J9V7gMw0=
+github.com/lildude/starling v0.0.0-20190111172737-191b5c53b968 h1:eIzd3tQC6hcKVMAe7VyRiBvl/FOQHYrbteA5UUhp8QE=
+github.com/lildude/starling v0.0.0-20190111172737-191b5c53b968/go.mod h1:XpUO3QWHgbDIkXkJmpa6JbDCepPmDiidxy8J9V7gMw0=
+github.com/lildude/starling v0.0.0-20190112114505-65893e2d8462 h1:jHqV+HORJfqJrPStUBIDtUrMwpBhP2Z4Orshh15Swkw=
+github.com/lildude/starling v0.0.0-20190112114505-65893e2d8462/go.mod h1:XpUO3QWHgbDIkXkJmpa6JbDCepPmDiidxy8J9V7gMw0=
+github.com/lildude/starling v0.0.0-20190113144927-524aae5532a4 h1:PZolEM51SVgFjr2cF9YYAgX98BYLMUiV09IuGaknylY=
+github.com/lildude/starling v0.0.0-20190113144927-524aae5532a4/go.mod h1:XpUO3QWHgbDIkXkJmpa6JbDCepPmDiidxy8J9V7gMw0=
 github.com/pkg/errors v0.0.0-20180311214515-816c9085562c h1:F5RoIh7F9wB47PvXvpP1+Ihq1TkyC8iRdvwfKkESEZQ=
 github.com/pkg/errors v0.0.0-20180311214515-816c9085562c/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
