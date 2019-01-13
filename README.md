@@ -35,7 +35,7 @@ This implementation is a fork of the original work at https://github.com/billglo
   - `STARLING_WEBHOOK_SECRET` - used to validate inbound requests
   - `STARLING_PERSONAL_ACCESS_TOKEN` - used to request transfers to savings goal
   - `STARLING_SAVING_GOAL` -  the identifier of the target savings goal. If not set, rounding will not occur.
-  - `STARLING_SWEEP_THRESHOLD` - optional threshold, in _pounds_, for incoming payments to trigger a sweep. If not set, sweeping will not occur.
+  - `STARLING_SWEEP_THRESHOLD` - optional threshold, integer in pence, for incoming payments to trigger a sweep. If not set, sweeping will not occur.
   - `STARTLING_SWEEP_SAVING_GOAL` - optional identifier of the target savings goal for sweeps. Defaults to `STARLING_SAVING_GOAL` if not set.
 
   For example, from the CLI:
