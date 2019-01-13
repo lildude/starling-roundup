@@ -7,25 +7,24 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"math"
 	"net/http"
 	"net/url"
 	"os"
 
-	"github.com/billglover/starling"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/lildude/starling"
 	"golang.org/x/oauth2"
 )
 
 // Settings pulled in from the environment variables.
 // SavingGoal is now optional as Starling now does rounding itself, however the Starling API doesn't provide a way to determine this rounding yet.
 type Settings struct {
-	Port                string  `required:"true" envconfig:"PORT"`
-	WebhookSecret       string  `required:"true" split_words:"true"`
-	SavingGoal          string  `split_words:"true"`
-	PersonalAccessToken string  `required:"true" split_words:"true"`
-	SweepThreshold      float64 `split_words:"true"`
-	SweepSavingGoal     string  `split_words:"true"`
+	Port                string `required:"true" envconfig:"PORT"`
+	WebhookSecret       string `required:"true" split_words:"true"`
+	SavingGoal          string `split_words:"true"`
+	PersonalAccessToken string `required:"true" split_words:"true"`
+	SweepThreshold      int64  `split_words:"true"`
+	SweepSavingGoal     string `split_words:"true"`
 }
 
 var s Settings
@@ -81,7 +80,7 @@ func TxnHandler(w http.ResponseWriter, r *http.Request) {
 	os.Setenv("LAST_TRANSACTION_UID", wh.WebhookNotificationUID)
 
 	log.Println("INFO: type:", wh.WebhookType)
-	log.Printf("INFO: amount: %.2f", wh.Content.Amount)
+	log.Printf("INFO: amount : %d pence", wh.TransactionAmount.MinorUnits)
 
 	// Ignore anything other than card transactions or specific inbound transactions likely to be large payments like salary etc
 	if wh.WebhookType != "TRANSACTION_CARD" &&
@@ -104,13 +103,12 @@ func TxnHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		destGoal = s.SavingGoal
-		if wh.Content.Amount >= 0.0 {
+		if wh.Direction != "PAYMENT" {
 			log.Printf("INFO: ignoring inbound %s transaction\n", wh.WebhookType)
 			return
 		}
 		// Round up to the nearest major unit
-		amtMinor := math.Round(wh.Content.Amount * -100)
-		ra = roundUp(int64(amtMinor))
+		ra = roundUp(wh.TransactionAmount.MinorUnits)
 		prettyRa = float64(ra) / 100
 		log.Println("INFO: round-up yields:", ra)
 
@@ -121,14 +119,14 @@ func TxnHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		destGoal = s.SweepSavingGoal
-		if s.SweepThreshold <= 0.0 || wh.Content.Amount < s.SweepThreshold {
-			log.Printf("INFO: ignoring inbound transaction below sweep threshold (%2.f)\n", s.SweepThreshold)
+		if s.SweepThreshold <= 0 || wh.TransactionAmount.MinorUnits < s.SweepThreshold {
+			log.Printf("INFO: ignoring inbound transaction below sweep threshold (%d)\n", s.SweepThreshold)
 			return
 		}
 
-		if wh.Content.Amount > s.SweepThreshold {
-			log.Printf("INFO: threshold: %.2f\n", s.SweepThreshold)
-			ra = getBalanceBefore(wh.Content.Amount)
+		if wh.TransactionAmount.MinorUnits > s.SweepThreshold {
+			log.Printf("INFO: threshold: %d\n", s.SweepThreshold)
+			ra = getBalanceBefore(wh.TransactionAmount.MinorUnits)
 			prettyRa = float64(ra) / 100
 			log.Printf("INFO: balance before: %.2f\n", prettyRa)
 		}
@@ -144,7 +142,7 @@ func TxnHandler(w http.ResponseWriter, r *http.Request) {
 	cl := newClient(ctx, s.PersonalAccessToken)
 	amt := starling.Amount{
 		MinorUnits: ra,
-		Currency:   wh.Content.SourceCurrency,
+		Currency:   wh.SourceAmount.Currency,
 	}
 
 	// Transfer the funds to the savings goal
@@ -192,20 +190,26 @@ func validateSignature(body []byte, reqSig string) bool {
 
 func roundUp(txn int64) int64 {
 	// By using 99 we ensure that a 0 value is not rounded up to the next 100.
+	//amtRound := (math.Round(float64(txn)/100) + 99)
 	amtRound := (txn + 99) / 100 * 100
-	return amtRound - txn
+	return int64(amtRound) - txn
 }
 
 // Grabs txn deets and removes txn amt from balance and returns the minor units
-func getBalanceBefore(txnAmt float64) int64 {
+func getBalanceBefore(txnAmt int64) int64 {
 	ctx := context.Background()
 	cl := newClient(ctx, s.PersonalAccessToken)
-	bal, _, err := cl.AccountBalance(ctx)
+	accounts, _, err := cl.Accounts(ctx)
+	if err != nil {
+		log.Println("ERROR: problem getting account UID")
+		return 0
+	}
+	bal, _, err := cl.AccountBalance(ctx, accounts[0].UID)
 	if err != nil {
 		log.Println("ERROR: problem getting balance")
 		return 0
 	}
-	log.Println("INFO: balance: ", bal.Effective)
-	diff := ((bal.Effective * 100) - (txnAmt * 100))
+	log.Println("INFO: balance: ", bal.Effective.MinorUnits)
+	diff := (bal.Effective.MinorUnits - txnAmt)
 	return int64(diff)
 }
